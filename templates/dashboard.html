@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Financial Dashboard</h2>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+
+<div class="col-md-4">
+<div class="card p-4 text-center">
+<h6>Total Expenses</h6>
+<h2 class="text-danger">₹{{ total_expense }}</h2>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-4 text-center">
+<h6>Total Categories</h6>
+<h2>{{ categories|length }}</h2>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card p-4 text-center">
+<h6>Total Transactions</h6>
+<h2>{{ total_transactions }}</h2>
+</div>
+</div>
+
+</div>
+
+
+<div class="row mt-4">
+
+    <!-- Pie Chart -->
+    <div class="col-md-6">
+        <div class="card p-4 text-center">
+            <h5 class="mb-3">Category Breakdown</h5>
+            <div style="height:300px;">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Line Chart -->
+    <div class="col-md-6">
+        <div class="card p-4 text-center">
+            <h5 class="mb-3">Monthly Expenses</h5>
+            <div style="height:300px;">
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mt-4">
+
+<div class="col-md-12">
+
+<div class="card p-4 text-center">
+
+<h5>Next Month Expense Prediction</h5>
+
+{% if prediction %}
+
+<h3 class="text-primary">₹{{ prediction }}</h3>
+
+{% if prediction > total_expense %}
+<p class="text-danger">
+⚠️ You may exceed budget next month.
+</p>
+{% endif %}
+
+{% else %}
+
+<p class="text-muted">
+Not enough data for prediction
+</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+<div class="row mt-4">
+
+<div class="col-md-12">
+
+<div class="card p-4 text-center">
+
+<h5>Monthly Budget</h5>
+
+<h3>₹{{ budget }}</h3>
+
+{% if alert %}
+<div class="alert alert-danger mt-3">
+{{ alert }}
+</div>
+{% endif %}
+
+{% if suggestion %}
+<div class="alert alert-warning">
+💡 {{ suggestion }}
+</div>
+{% endif %}
+
+<a href="{{ url_for('budget.set_budget') }}"
+   class="btn btn-primary mt-2">
+Set / Update Budget
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- Savings Suggestion -->
+
+<div class="row mt-4">
+
+<div class="col-md-12">
+
+<div class="card p-4">
+
+<h5>Savings Suggestion</h5>
+
+<p class="text-muted">
+
+Reduce food expenses by 15% to increase savings.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Budget Progress -->
+
+<div class="row mt-4">
+
+<div class="col-md-12">
+
+<div class="card p-4">
+
+<h5>Budget Usage</h5>
+
+<div class="progress">
+
+<div class="progress-bar bg-danger"
+
+role="progressbar"
+
+style="width: {{ (total_expense/budget)*100 if budget else 0 }}%">
+
+{{ (total_expense/budget)*100 if budget else 0 }}%
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+const categories = {{ categories | tojson }};
+const amounts = {{ amounts | tojson }};
+
+const months = {{ months | tojson }};
+const monthlyAmounts = {{ monthly_amounts | tojson }};
+
+
+// PIE CHART
+new Chart(document.getElementById("pieChart"), {
+type: "pie",
+data: {
+labels: categories,
+datasets: [{
+data: amounts,
+backgroundColor:[
+"#4F46E5",
+"#22C55E",
+"#F59E0B",
+"#EF4444",
+"#06B6D4"
+]
+}]
+}
+});
+
+
+// LINE CHART
+new Chart(document.getElementById("lineChart"), {
+type: "line",
+data:{
+labels: months,
+datasets:[{
+label:"Expenses",
+data: monthlyAmounts,
+borderColor:"#4F46E5",
+tension:0.3
+}]
+}
+});
+
+});
+
+</script>
+
+{% endblock %}

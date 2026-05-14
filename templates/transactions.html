@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center">
+
+    <div class="card shadow p-4 mx-auto w-100" style="max-width:900px; border-radius:12px;">
+
+        <h3 class="text-center mb-4">Your Transactions</h3>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for t in transactions %}
+                    <tr>
+
+                        <td class="fw-semibold text-danger">₹{{ t.amount }}</td>
+
+                        <td>{{ t.description }}</td>
+
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ t.category }}
+                            </span>
+                        </td>
+
+                        <td>{{ t.date.strftime('%Y-%m-%d') }}</td>
+
+                        <td class="text-center">
+                            <a href="{{ url_for('transactions.delete_transaction', id=t.id) }}"
+                               class="btn btn-sm btn-danger">
+                               Delete
+                            </a>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">AI Financial Insights</h2>
+
+<div class="row">
+
+{% for i in insights %}
+
+<div class="col-md-6">
+
+<div class="card p-4 mb-3">
+
+<h6>Insight</h6>
+
+<p>{{ i }}</p>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
